@@ -1,0 +1,34 @@
+db.linkedon.find({})
+db.linkedon.count({salary: {$gt: 25000}})
+db.linkedon.find({},
+ {firstName: 1, salary:1, _id: 0}
+ ).sort({salary: -1}).limit(3)
+db.linkedon.find({
+    $and:[ 
+        {"currentCompany.name": "Walmart"},
+        {salary: {$gt: 7000}}]
+})
+db.linkedon.find(
+{$or:[
+    {"currentCompany.industry": "Retail"},
+    {"currentCompany.industry": "Sales"}
+    ]},
+    {"currentCompany.name": 1, 
+    firstName: 1, 
+    lastName: 1, 
+    salary: 1, 
+    _id: 0 }
+).sort({salary: -1}).limit(1)
+db.linkedon.count({
+    $or:[
+        {"currentCompany.name": "Apple"},
+        {"previousCompanies.name": "Apple"}
+    ]
+})
+db.linkedon.aggregate([
+    {$match: {"currentCompany.name": "Apple"}},
+    {$group: 
+        {_id: "$currentCompany.industry" ,
+        count: {$sum: 1}}}
+])
+db.linkedon.find({"currentCompany.name": "Apple"})
