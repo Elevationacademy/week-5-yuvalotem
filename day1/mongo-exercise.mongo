@@ -31,4 +31,22 @@ db.linkedon.aggregate([
         {_id: "$currentCompany.industry" ,
         count: {$sum: 1}}}
 ])
-db.linkedon.find({"currentCompany.name": "Apple"})
+db.linkedon.aggregate([
+    {$match: {currentPosition: "Analyst"}},
+    {$group:
+        {_id: "$currentCompany.name",
+        avregSalarey: {$avg: "$salary"}}}
+])
+db.linkedon.aggregate([
+    {$match:{$and: 
+        [ {$or: [
+            {"currentCompany.name": "Apple"},
+            {"currentCompany.name": "Google"}
+        ]},
+        {"currentCompany.industry": "Tech"}]}},
+    {$group:
+        {_id: "$lastName",
+        average: {$avg: "$salary"}}},
+        { $sort: { average: -1 } }
+])
+
